@@ -91,8 +91,8 @@ class ChatBot():
             logging.error(f"An error occurred: {e}")
 
     
-    @staticmethod
-    def text_to_speech(text):
+    
+    def text_to_speech(self, text):
         """
         Converts the given text into speech and plays it through the system's default audio output.
 
@@ -111,7 +111,7 @@ class ChatBot():
             - Prints a message to the console if an error occurs during the text-to-speech conversion
             or while removing the temporary file.
         """
-        print("Dev --> ", text)
+        print(f"{self.name} --> ", text)
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as fp:
                 speaker = gTTS(text=text, lang="en", slow=False)
@@ -241,8 +241,8 @@ class ChatBot():
         else:
             return "My apologies, but I regret to inform you that I was unable to procure the weather information for your request."
 
-    @staticmethod
-    def get_time():
+    
+    def get_time(self):
         return datetime.datetime.now().strftime('%H:%M')
 
     def handle_conversation(self):
@@ -312,5 +312,5 @@ class ChatBot():
 
 # Running the AI
 if __name__ == "__main__":
-    ai = ChatBot(name="Jane")
-    ai.run()
+    chatbot = ChatBot("Jarvis")
+    chatbot.run()
