@@ -207,39 +207,40 @@ class ChatBot():
             "Happy to help!"
         ])
 
-    def get_weather(self): 
-        """
-        Retrieves the weather information for a specified city from the user's input text.
+    def get_weather(self):
+      """
+      Retrieves the weather information for a specified city from the user's input text.
+  
+      This method processes the user's input text to identify a city name using the `city_identifier`
+      model, which is expected to be a spaCy model loaded with the capability to recognize geopolitical
+      entities (GPE). If a city name is identified, it attempts to fetch the weather information for
+      that city using the `weather` adapter's `get_weather` method.
+  
+      If the method successfully identifies a city and retrieves weather information, it returns a
+      formatted string describing the weather in that city. If no city is identified in the input text,
+      or if the weather information cannot be retrieved, it returns a polite error message.
+  
+      Returns:
+          str: A message containing the weather information for the identified city, or an error
+              message if the city cannot be identified or if weather information cannot be retrieved.
+      """
+      statement = self.city_identifier(self.text)
+  
+      city = None
+      for ent in statement.ents:
+          if ent.label_ == "GPE": # GeoPolitical Entity
+              city = ent.text
+              break
+  
+      if city:
+          city_weather = self.weather.get_weather(city)
+          if city_weather is not None:
+              return f"Ah, in {city}, one observes the weather to be {city_weather}. Quite intriguing, wouldn't you agree?"
+          else:
+              return "My apologies, but I regret to inform you that I was unable to procure the weather information for your request."
+      else:
+          return "I say, old chap, one must specify a city to inquire about the weather."
 
-        This method processes the user's input text to identify a city name using the `city_identifier`
-        model, which is expected to be a spaCy model loaded with the capability to recognize geopolitical
-        entities (GPE). If a city name is identified, it attempts to fetch the weather information for
-        that city using the `weather` adapter's `get_weather` method.
-
-        If the method successfully identifies a city and retrieves weather information, it returns a
-        formatted string describing the weather in that city. If no city is identified in the input text,
-        or if the weather information cannot be retrieved, it returns a polite error message.
-
-        Returns:
-            str: A message containing the weather information for the identified city, or an error
-                message if the city cannot be identified or if weather information cannot be retrieved.
-        """
-        statement = self.city_identifier(self.text)
-
-        for ent in statement.ents:
-            if ent.label == "GPE": # GeoPolitical Entity
-                city = ent.text
-                return self.weather.get_weather(city)
-            else:
-                return "I say, old chap, one must specify a city to inquire about the weather."
-            
-        city_weather = self.weather.get_weather(city)
-
-        if city_weather is not None:
-            return f"Ah, in {city}, one observes the weather to be {city_weather}. Quite intriguing, wouldn't you agree?"
-
-        else:
-            return "My apologies, but I regret to inform you that I was unable to procure the weather information for your request."
 
     
     def get_time(self):
